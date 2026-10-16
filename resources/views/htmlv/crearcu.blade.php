@@ -6,12 +6,12 @@
     <title>Crear cuenta — DAV Tienda</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/cuenta.css">
+    <link rel="stylesheet" href="{{ asset('css/cuenta.css') }}">
 </head>
 <body>
 
     <header class="site-header">
-        <img src="../img/logo.jpg" alt="Logo">
+        <img src="{{ asset('img/logo.jpg') }}" alt="Logo">
         <div class="brand">DAV <span>Tienda</span></div>
     </header>
 
@@ -21,18 +21,21 @@
 
         <div class="form-card">
 
-            <form action="crear-cuenta-exito.html" method="get">
+            <form action="{{ route('tienda.registro.post') }}" method="post">
+                @csrf
+                @if(session('err'))<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">{{ session('err') }}</div>@endif
+        @if($errors->any())<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>@endif
                 <div class="form-row">
                     <div class="fg">
                         <label>Nombre</label>
                         <div class="icon-input"><span>👤</span>
-                            <input type="text" name="nombre" placeholder="Tu nombre" required>
+                            <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="Tu nombre" required>
                         </div>
                     </div>
                     <div class="fg">
                         <label>Apellido Paterno</label>
                         <div class="icon-input"><span>👥</span>
-                            <input type="text" name="paterno" placeholder="Apellido" required>
+                            <input type="text" name="paterno" value="{{ old('paterno') }}" placeholder="Apellido" required>
                         </div>
                     </div>
                 </div>
@@ -40,7 +43,7 @@
                 <div class="fg">
                     <label>Teléfono (se usará para iniciar sesión)</label>
                     <div class="icon-input"><span>📞</span>
-                        <input type="tel" name="telefono" placeholder="10 dígitos" maxlength="10" pattern="[0-9]{10}"
+                        <input type="tel" name="telefono" value="{{ old('telefono') }}" placeholder="10 dígitos" maxlength="10" pattern="[0-9]{10}"
                                title="Por favor, introduce exactamente 10 dígitos numéricos." required>
                     </div>
                 </div>
@@ -63,25 +66,25 @@
                     <div class="fg">
                         <label>Dirección</label>
                         <div class="icon-input"><span>🏠</span>
-                            <input type="text" name="direccion" placeholder="Tu dirección" required>
+                            <input type="text" name="direccion" value="{{ old('direccion') }}" placeholder="Tu dirección" required>
                         </div>
                     </div>
                     <div class="fg">
                         <label>Código Postal</label>
                         <div class="icon-input"><span>📮</span>
-                            <input type="text" name="cp" placeholder="5 dígitos" maxlength="5" required>
+                            <input type="text" name="cp" value="{{ old('cp') }}" placeholder="5 dígitos" maxlength="5" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="btn-row">
                     <button type="submit" class="btn-primary">✅ Crear cuenta</button>
-                    <a href="inicio.html" class="btn-cancel">✖ Cancelar</a>
+                    <a href="{{ route('tienda.inicio') }}" class="btn-cancel">✖ Cancelar</a>
                 </div>
             </form>
 
             <div class="divider">— ¿Ya tienes cuenta? —</div>
-            <div class="link-login"><a href="login.html">Iniciar sesión aquí</a></div>
+            <div class="link-login"><a href="{{ route('tienda.login') }}">Iniciar sesión aquí</a></div>
 
         </div>
     </div>

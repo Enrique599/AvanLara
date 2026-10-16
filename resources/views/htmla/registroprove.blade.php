@@ -6,85 +6,85 @@
   <title>Registro de Proveedores — Sistema DAV</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 
   <!-- SIDEBAR -->
   <nav id="sb">
     <div class="sb-head">
-      <div class="logo-c"><img src="../img/logo.jpeg" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
+      <div class="logo-c"><img src="{{ asset('img/logo.jpeg') }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
       <div class="logo-t">SistemaCRUD</div>
     </div>
     <div class="sb-user">
-      <div class="av">CM</div>
+      <div class="av">{{ collect(explode(' ', session('admin_nombre', 'Admin')))->map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('') }}</div>
       <div>
-        <div class="un">Carlos Morales</div>
-        <div class="ur">Administrador</div>
+        <div class="un">{{ session('admin_nombre', 'Administrador') }}</div>
+        <div class="ur">{{ ucfirst(session('admin_rol', 'admin')) }}</div>
       </div>
     </div>
 
     <div class="sb-lbl">Principal</div>
-    <a href="dashboard.html" class="ni ">
+    <a href="{{ route('admin.dashboard') }}" class="ni ">
       <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
     </a>
 
     <div class="sb-lbl">Operatividad</div>
 
-    <a href="ventas.html" class="ni ">
+    <a href="{{ route('admin.ventas.index') }}" class="ni ">
       <i class="fas fa-dollar-sign"></i><span>Ventas</span>
     </a>
 
-    <a href="pedidos-clientes.html" class="ni ">
+    <a href="{{ route('admin.pedidos-clientes.index') }}" class="ni ">
       <i class="fas fa-box"></i><span>Pedidos de clientes</span>
     </a>
 
-    <a href="pedidos-proveedores.html" class="ni ">
+    <a href="{{ route('admin.pedidos-proveedores.index') }}" class="ni ">
       <i class="fas fa-truck-loading"></i><span>Pedidos a proveedores</span>
     </a>
 
-    <a href="registro-proveedores.html" class="ni act">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni act">
       <i class="fas fa-clipboard-list"></i><span>Registro proveedores</span>
     </a>
 
-    <a href="validacion-pago.html" class="ni ">
+    <a href="{{ route('admin.validacion-pago.index') }}" class="ni ">
       <i class="fas fa-money-check-dollar"></i><span>Validación de pago</span>
     </a>
 
     <div class="sb-lbl">Catálogos</div>
 
-    <a href="clientes.html" class="ni ">
+    <a href="{{ route('admin.clientes.index') }}" class="ni ">
       <i class="fas fa-users"></i><span>Clientes</span>
     </a>
 
-    <a href="prendas.html" class="ni ">
+    <a href="{{ route('admin.prendas.index') }}" class="ni ">
       <i class="fas fa-shirt"></i><span>Prendas</span>
     </a>
 
-    <a href="productos.html" class="ni ">
+    <a href="{{ route('admin.productos.index') }}" class="ni ">
       <i class="fas fa-box-open"></i><span>Productos</span>
     </a>
 
-    <a href="usuarios.html" class="ni ">
+    <a href="{{ route('admin.usuarios.index') }}" class="ni ">
       <i class="fas fa-user-gear"></i><span>Usuarios</span>
     </a>
 
-    <a href="inventario.html" class="ni ">
+    <a href="{{ route('admin.inventario.index') }}" class="ni ">
       <i class="fas fa-warehouse"></i><span>Inventario</span>
     </a>
 
-    <a href="#" class="ni">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni">
       <i class="fas fa-truck"></i><span>Proveedores</span>
     </a>
 
     <div class="sb-lbl">Sistema</div>
-    <a href="respaldar-bd.html" class="ni ">
+    <a href="{{ route('admin.respaldo.index') }}" class="ni ">
       <i class="fas fa-download"></i><span>Respaldar BD</span>
     </a>
-    <a href="restaurar-bd.html" class="ni ">
+    <a href="{{ route('admin.restaurar.index') }}" class="ni ">
       <i class="fas fa-upload"></i><span>Restaurar BD</span>
     </a>
-    <a href="reporte-pdf.html" class="ni ">
+    <a href="{{ route('admin.reporte.index') }}" class="ni ">
       <i class="fas fa-file-pdf"></i><span>Reporte PDF</span>
     </a>
   </nav>
@@ -99,27 +99,34 @@
         Home / <span style="color:var(--accent)">Registro de Proveedores</span>
       </div>
       <div class="tb-right">
-        <div class="tb-icon"><i class="fas fa-bell"></i><span class="bdot">3</span></div>
-        <div class="av" style="cursor:pointer">AP</div>
+                <form action="{{ route('admin.logout') }}" method="post" style="display:inline">@csrf<button type="submit" class="btn btn-sm btn-outline" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i> Salir</button></form>
       </div>
     </div>
     <!-- CONTENT START -->
     
     <div id="content">
 
+@if(session('ok'))<div class="alert alert-ok"><i class="fas fa-check-circle"></i> {{ session('ok') }}</div>@endif
+@if(session('err'))<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i> {{ session('err') }}</div>@endif
+@if($errors->any())<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i><div>@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div></div>@endif
+
 <div class="ptitle">Registro de Proveedores</div>
-<div class="psub">☀️ ¡Buenos días! — Administra tu catálogo de proveedores</div>
+<div class="psub">{{ $saludo }} — Administra tu catálogo de proveedores</div>
 
 <div class="fcard" style="margin-bottom:20px">
-  <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px"><i class="fas fa-clipboard-list" style="color:var(--accent3)"></i> Agregar nuevo proveedor</div>
-  <form action="#" method="post" onsubmit="return false">
+  <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px"><i class="fas fa-clipboard-list" style="color:var(--accent3)"></i> {{ ($editar ?? null) ? 'Modificar proveedor' : 'Agregar nuevo proveedor' }}</div>
+  @php $e = $editar ?? null; @endphp
+  <form action="{{ $e ? route('admin.proveedores.update', $e) : route('admin.proveedores.store') }}" method="post">
+    @csrf
+    @if($e) @method('PUT') @endif
     <div class="fgrid">
-      <div class="fg"><label>Nombre *</label><input class="fc" type="text" placeholder="Nombre" required></div>
-      <div class="fg"><label>Apellido Paterno *</label><input class="fc" type="text" placeholder="Apellido" required></div>
-      <div class="fg"><label>Teléfono *</label><input class="fc" type="text" placeholder="10 dígitos" maxlength="10" required></div>
-      <div class="fg"><label>Dirección *</label><input class="fc" type="text" placeholder="Dirección completa" required></div>
+      <div class="fg"><label>Nombre *</label><input class="fc" type="text" name="nombre" maxlength="20" placeholder="Nombre" value="{{ old('nombre', $e->Nombre ?? '') }}" required></div>
+      <div class="fg"><label>Apellido Paterno *</label><input class="fc" type="text" name="ap_paterno" maxlength="20" placeholder="Apellido" value="{{ old('ap_paterno', $e->Ap_paterno ?? '') }}" required></div>
+      <div class="fg"><label>Teléfono *</label><input class="fc" type="text" name="telefono" placeholder="10 dígitos" maxlength="10" value="{{ old('telefono', $e->Telefono ?? '') }}" required></div>
+      <div class="fg"><label>Dirección *</label><input class="fc" type="text" name="direccion" maxlength="40" placeholder="Dirección completa" value="{{ old('direccion', $e->Direccion ?? '') }}" required></div>
     </div>
-    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar proveedor</button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ $e ? 'Actualizar proveedor' : 'Guardar proveedor' }}</button>
+    @if($e)<a href="{{ route('admin.proveedores.index') }}" class="btn btn-outline"><i class="fas fa-times"></i> Cancelar edición</a>@endif
   </form>
 </div>
 
@@ -128,8 +135,11 @@
   <table>
     <thead><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Dirección</th><th>Modificar</th><th>Eliminar</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>Textiles del Centro</td><td>S.A. de C.V.</td><td>2225557890</td><td>Zona Industrial 45</td><td><a href="#" class="ib ib-edit" onclick="return false"><i class="fas fa-pencil-alt"></i></a></td><td><a href="#" class="ib ib-del" onclick="return false"><i class="fas fa-times"></i></a></td></tr>
-      <tr><td>2</td><td>Confecciones Puebla</td><td>S.A.</td><td>2221239900</td><td>Av. Independencia 210</td><td><a href="#" class="ib ib-edit" onclick="return false"><i class="fas fa-pencil-alt"></i></a></td><td><a href="#" class="ib ib-del" onclick="return false"><i class="fas fa-times"></i></a></td></tr>
+      @foreach($proveedores as $p)
+      <tr><td>{{ $p->Id_proovedor }}</td><td>{{ $p->Nombre }}</td><td>{{ $p->Ap_paterno }}</td><td>{{ $p->Telefono }}</td><td>{{ $p->Direccion }}</td>
+        <td><a href="{{ route('admin.proveedores.edit', $p) }}" class="ib ib-edit" title="Modificar"><i class="fas fa-pencil-alt"></i></a></td><td><form action="{{ route('admin.proveedores.destroy', $p) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este registro?')">@csrf @method('DELETE')<button type="submit" class="ib ib-del" title="Eliminar"><i class="fas fa-times"></i></button></form></td></tr>
+      @endforeach
+      @if($proveedores->isEmpty())<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No hay proveedores registrados.</td></tr>@endif
     </tbody>
   </table>
 </div>

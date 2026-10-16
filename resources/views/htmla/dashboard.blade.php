@@ -6,85 +6,85 @@
   <title>Dashboard — Sistema DAV</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 
   <!-- SIDEBAR -->
   <nav id="sb">
     <div class="sb-head">
-      <div class="logo-c"><img src="../img/logo.jpeg" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
+      <div class="logo-c"><img src="{{ asset('img/logo.jpeg') }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
       <div class="logo-t">SistemaCRUD</div>
     </div>
     <div class="sb-user">
-      <div class="av">CM</div>
+      <div class="av">{{ collect(explode(' ', session('admin_nombre', 'Admin')))->map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('') }}</div>
       <div>
-        <div class="un">Carlos Morales</div>
-        <div class="ur">Administrador</div>
+        <div class="un">{{ session('admin_nombre', 'Administrador') }}</div>
+        <div class="ur">{{ ucfirst(session('admin_rol', 'admin')) }}</div>
       </div>
     </div>
 
     <div class="sb-lbl">Principal</div>
-    <a href="dashboard.html" class="ni act">
+    <a href="{{ route('admin.dashboard') }}" class="ni act">
       <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
     </a>
 
     <div class="sb-lbl">Operatividad</div>
 
-    <a href="ventas.html" class="ni ">
+    <a href="{{ route('admin.ventas.index') }}" class="ni ">
       <i class="fas fa-dollar-sign"></i><span>Ventas</span>
     </a>
 
-    <a href="pedidos-clientes.html" class="ni ">
+    <a href="{{ route('admin.pedidos-clientes.index') }}" class="ni ">
       <i class="fas fa-box"></i><span>Pedidos de clientes</span>
     </a>
 
-    <a href="pedidos-proveedores.html" class="ni ">
+    <a href="{{ route('admin.pedidos-proveedores.index') }}" class="ni ">
       <i class="fas fa-truck-loading"></i><span>Pedidos a proveedores</span>
     </a>
 
-    <a href="registro-proveedores.html" class="ni ">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni ">
       <i class="fas fa-clipboard-list"></i><span>Registro proveedores</span>
     </a>
 
-    <a href="validacion-pago.html" class="ni ">
+    <a href="{{ route('admin.validacion-pago.index') }}" class="ni ">
       <i class="fas fa-money-check-dollar"></i><span>Validación de pago</span>
     </a>
 
     <div class="sb-lbl">Catálogos</div>
 
-    <a href="clientes.html" class="ni ">
+    <a href="{{ route('admin.clientes.index') }}" class="ni ">
       <i class="fas fa-users"></i><span>Clientes</span>
     </a>
 
-    <a href="prendas.html" class="ni ">
+    <a href="{{ route('admin.prendas.index') }}" class="ni ">
       <i class="fas fa-shirt"></i><span>Prendas</span>
     </a>
 
-    <a href="productos.html" class="ni ">
+    <a href="{{ route('admin.productos.index') }}" class="ni ">
       <i class="fas fa-box-open"></i><span>Productos</span>
     </a>
 
-    <a href="usuarios.html" class="ni ">
+    <a href="{{ route('admin.usuarios.index') }}" class="ni ">
       <i class="fas fa-user-gear"></i><span>Usuarios</span>
     </a>
 
-    <a href="inventario.html" class="ni ">
+    <a href="{{ route('admin.inventario.index') }}" class="ni ">
       <i class="fas fa-warehouse"></i><span>Inventario</span>
     </a>
 
-    <a href="#" class="ni">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni">
       <i class="fas fa-truck"></i><span>Proveedores</span>
     </a>
 
     <div class="sb-lbl">Sistema</div>
-    <a href="respaldar-bd.html" class="ni ">
+    <a href="{{ route('admin.respaldo.index') }}" class="ni ">
       <i class="fas fa-download"></i><span>Respaldar BD</span>
     </a>
-    <a href="restaurar-bd.html" class="ni ">
+    <a href="{{ route('admin.restaurar.index') }}" class="ni ">
       <i class="fas fa-upload"></i><span>Restaurar BD</span>
     </a>
-    <a href="reporte-pdf.html" class="ni ">
+    <a href="{{ route('admin.reporte.index') }}" class="ni ">
       <i class="fas fa-file-pdf"></i><span>Reporte PDF</span>
     </a>
   </nav>
@@ -99,41 +99,44 @@
         Home / <span style="color:var(--accent)">Dashboard</span>
       </div>
       <div class="tb-right">
-        <div class="tb-icon"><i class="fas fa-bell"></i><span class="bdot">3</span></div>
-        <div class="av" style="cursor:pointer">AP</div>
+                <form action="{{ route('admin.logout') }}" method="post" style="display:inline">@csrf<button type="submit" class="btn btn-sm btn-outline" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i> Salir</button></form>
       </div>
     </div>
     <!-- CONTENT START -->
     
     <div id="content">
 
+@if(session('ok'))<div class="alert alert-ok"><i class="fas fa-check-circle"></i> {{ session('ok') }}</div>@endif
+@if(session('err'))<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i> {{ session('err') }}</div>@endif
+@if($errors->any())<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i><div>@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div></div>@endif
+
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
   <div>
     <div class="ptitle" style="margin-bottom:2px">Dashboard</div>
-    <div class="psub" style="margin-bottom:0">☀️ ¡Buenos días! — Resumen general del sistema</div>
+    <div class="psub" style="margin-bottom:0">{{ $saludo }} — Resumen general del sistema</div>
   </div>
   <div style="font-size:11.5px;color:var(--muted)">Home / <span style="color:var(--accent)">Dashboard</span></div>
 </div>
 
 <div class="stat-grid">
   <div class="sc sc-teal">
-    <div><div class="sc-val">128</div><div class="sc-lbl">Clientes Registrados</div>
-      <a href="clientes.html" class="sc-more" style="color:rgba(255,255,255,.85)">Ver clientes <i class="fas fa-arrow-right"></i></a></div>
+    <div><div class="sc-val">{{ $totalClientes }}</div><div class="sc-lbl">Clientes Registrados</div>
+      <a href="{{ route('admin.clientes.index') }}" class="sc-more" style="color:rgba(255,255,255,.85)">Ver clientes <i class="fas fa-arrow-right"></i></a></div>
     <i class="fas fa-users sc-icon"></i>
   </div>
   <div class="sc sc-green">
-    <div><div class="sc-val">342</div><div class="sc-lbl">Ventas Totales</div>
-      <a href="ventas.html" class="sc-more" style="color:rgba(255,255,255,.85)">Ver ventas <i class="fas fa-arrow-right"></i></a></div>
+    <div><div class="sc-val">{{ $totalVentas }}</div><div class="sc-lbl">Ventas Totales</div>
+      <a href="{{ route('admin.ventas.index') }}" class="sc-more" style="color:rgba(255,255,255,.85)">Ver ventas <i class="fas fa-arrow-right"></i></a></div>
     <i class="fas fa-chart-bar sc-icon"></i>
   </div>
   <div class="sc sc-amber">
-    <div><div class="sc-val">57</div><div class="sc-lbl">Prendas</div>
-      <a href="prendas.html" class="sc-more" style="color:rgba(255,255,255,.85)">Ver prendas <i class="fas fa-arrow-right"></i></a></div>
+    <div><div class="sc-val">{{ $totalPrendas }}</div><div class="sc-lbl">Prendas</div>
+      <a href="{{ route('admin.prendas.index') }}" class="sc-more" style="color:rgba(255,255,255,.85)">Ver prendas <i class="fas fa-arrow-right"></i></a></div>
     <i class="fas fa-tshirt sc-icon"></i>
   </div>
   <div class="sc sc-red">
-    <div><div class="sc-val">$184,320.00</div><div class="sc-lbl">Monto Total Ventas</div>
-      <a href="ventas.html" class="sc-more" style="color:rgba(255,255,255,.85)">Más info <i class="fas fa-arrow-right"></i></a></div>
+    <div><div class="sc-val">${{ number_format($montoTotal, 2) }}</div><div class="sc-lbl">Monto Total Ventas</div>
+      <a href="{{ route('admin.ventas.index') }}" class="sc-more" style="color:rgba(255,255,255,.85)">Más info <i class="fas fa-arrow-right"></i></a></div>
     <i class="fas fa-dollar-sign sc-icon"></i>
   </div>
 </div>
@@ -153,9 +156,9 @@
     <div class="ch-hdr"><div class="ch-ttl"><i class="fas fa-pie-chart" style="color:var(--accent2)"></i> Resumen</div></div>
     <canvas id="graficaDonut" height="160"></canvas>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;text-align:center">
-      <div><div style="font-size:10px;color:var(--muted)">Clientes</div><div style="font-size:20px;font-weight:800;color:var(--accent)">128</div></div>
-      <div><div style="font-size:10px;color:var(--muted)">Ventas</div><div style="font-size:20px;font-weight:800;color:var(--accent2)">342</div></div>
-      <div><div style="font-size:10px;color:var(--muted)">Prendas</div><div style="font-size:20px;font-weight:800;color:var(--accent3)">57</div></div>
+      <div><div style="font-size:10px;color:var(--muted)">Clientes</div><div style="font-size:20px;font-weight:800;color:var(--accent)">{{ $totalClientes }}</div></div>
+      <div><div style="font-size:10px;color:var(--muted)">Ventas</div><div style="font-size:20px;font-weight:800;color:var(--accent2)">{{ $totalVentas }}</div></div>
+      <div><div style="font-size:10px;color:var(--muted)">Prendas</div><div style="font-size:20px;font-weight:800;color:var(--accent3)">{{ $totalPrendas }}</div></div>
     </div>
   </div>
 </div>
@@ -164,32 +167,32 @@
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl"><i class="fas fa-user-clock" style="color:var(--accent)"></i> Últimos 5 Clientes</div>
-      <a href="clientes.html" class="btn btn-sm btn-primary">Ver todos</a>
+      <a href="{{ route('admin.clientes.index') }}" class="btn btn-sm btn-primary">Ver todos</a>
     </div>
     <table>
       <thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Dirección</th></tr></thead>
       <tbody>
-        <tr><td>128</td><td>Ana López Ramos</td><td>2481234567</td><td>Av. Reforma 12</td></tr>
-        <tr><td>127</td><td>Jorge Pérez Cano</td><td>2489876543</td><td>Calle 5 de Mayo 34</td></tr>
-        <tr><td>126</td><td>Mariana Ruiz Gil</td><td>2225551234</td><td>Priv. Hidalgo 8</td></tr>
-        <tr><td>125</td><td>Luis Cruz Ortega</td><td>2221239876</td><td>Blvd. Xicoténcatl 56</td></tr>
-        <tr><td>124</td><td>Sofía Torres Ibáñez</td><td>2461112233</td><td>Camino Real 21</td></tr>
+        @forelse($ultimosClientes as $c)
+        <tr><td>{{ $c->Id_cliente }}</td><td>{{ $c->nombre_completo }}</td><td>{{ $c->Telefono }}</td><td>{{ $c->Direccion }}</td></tr>
+        @empty
+        <tr><td colspan="4" style="text-align:center;color:var(--muted)">Sin clientes.</td></tr>
+        @endforelse
       </tbody>
     </table>
   </div>
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl"><i class="fas fa-receipt" style="color:var(--accent2)"></i> Últimas 5 Ventas</div>
-      <a href="ventas.html" class="btn btn-sm btn-success">Ver todas</a>
+      <a href="{{ route('admin.ventas.index') }}" class="btn btn-sm btn-success">Ver todas</a>
     </div>
     <table>
       <thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Fecha</th></tr></thead>
       <tbody>
-        <tr><td>#342</td><td>Ana López Ramos</td><td>$650.00</td><td>2026-09-04</td></tr>
-        <tr><td>#341</td><td>Jorge Pérez Cano</td><td>$1,200.00</td><td>2026-09-03</td></tr>
-        <tr><td>#340</td><td>Mariana Ruiz Gil</td><td>$430.50</td><td>2026-09-02</td></tr>
-        <tr><td>#339</td><td>Luis Cruz Ortega</td><td>$980.00</td><td>2026-09-01</td></tr>
-        <tr><td>#338</td><td>Sofía Torres Ibáñez</td><td>$310.00</td><td>2026-08-31</td></tr>
+        @forelse($ultimasVentas as $v)
+        <tr><td>#{{ $v->Id_venta }}</td><td>{{ $v->cliente?->nombre_completo ?? '—' }}</td><td>${{ number_format($v->Total, 2) }}</td><td>{{ $v->Fecha->format('Y-m-d') }}</td></tr>
+        @empty
+        <tr><td colspan="4" style="text-align:center;color:var(--muted)">Sin ventas.</td></tr>
+        @endforelse
       </tbody>
     </table>
   </div>
@@ -204,8 +207,8 @@ const commonOpts = {
     y:{ticks:{color:'#7a8099'},grid:{color:'rgba(255,255,255,.05)'}}
   }
 };
-const labelsData = ['Abr 2026','May 2026','Jun 2026','Jul 2026','Ago 2026','Sep 2026'];
-const totalesData = [21000, 25800, 19600, 31200, 27650, 30800];
+const labelsData = @json($labels);
+const totalesData = @json($totales);
 let salesChart;
 function buildChart(type){
   const ctx = document.getElementById('graficaVentas').getContext('2d');
@@ -229,7 +232,7 @@ buildChart('bar');
 new Chart(document.getElementById('graficaDonut').getContext('2d'),{
   type:'doughnut',
   data:{ labels:['Clientes','Ventas','Prendas'],
-    datasets:[{ data:[128,342,57], backgroundColor:['#4f8ef7','#22d3a5','#f7c948'], borderWidth:0 }]},
+    datasets:[{ data:[{{ $totalClientes }},{{ $totalVentas }},{{ $totalPrendas }}], backgroundColor:['#4f8ef7','#22d3a5','#f7c948'], borderWidth:0 }]},
   options:{plugins:{legend:{position:'bottom',labels:{color:'#e4e8f0',font:{size:11}}}}}
 });
 </script>

@@ -6,12 +6,12 @@
     <title>Recuperar contraseña — DAV Tienda</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/recuperar.css">
+    <link rel="stylesheet" href="{{ asset('css/recuperar.css') }}">
 </head>
 <body>
 
 <header class="site-header">
-    <img src="../img/logo.jpg" alt="Logo">
+    <img src="{{ asset('img/logo.jpg') }}" alt="Logo">
     <div class="brand">DAV <span>Tienda</span></div>
 </header>
 
@@ -30,9 +30,12 @@
 
     <div class="form-card">
 
-        <div class="cliente-info">👤 Cuenta encontrada: <strong>Ana López Ramos</strong></div>
+        <div class="cliente-info">👤 Cuenta encontrada: <strong>{{ $cliente->nombre_completo }}</strong></div>
 
-        <form action="recuperar-password-exito.html" method="get">
+        <form action="{{ route('tienda.recuperar.guardar') }}" method="post">
+            @csrf
+            @if(session('err'))<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">{{ session('err') }}</div>@endif
+        @if($errors->any())<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>@endif
             <div class="fg">
                 <label>Nueva contraseña</label>
                 <div class="icon-input"><span>🔒</span>
@@ -46,7 +49,7 @@
             </div>
 
             <button type="submit" class="btn-primary">💾 Guardar contraseña</button>
-            <a href="recuperar-password.html" class="btn-back">← Volver</a>
+            <a href="{{ route('tienda.recuperar') }}" class="btn-back">← Volver</a>
         </form>
 
     </div>

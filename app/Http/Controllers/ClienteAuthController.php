@@ -1,0 +1,126 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cliente;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class ClienteAuthController extends Controller
+{
+
+
+    public function showLogin()
+    {
+        if (session()->has('cliente_id')) {
+            return redirect()->route('tienda.tienda');
+        }
+        return view('htmlv.login');
+    }
+
+    public function login(Request $request)
+    {
+        $d = $this->validar($request, ['telefono' => 'required|string|max:10', 'contrasena' => 'required|string']);
+
+        $cliente = Cliente::where('Telefono', trim($d['telefono']))->first();
+        if (!$cliente || !Hash::check($d['contrasena'], $cliente->Contrasena)) {
+            return back()->withInput($request->only('telefono'))->with('err', 'Teléfono o contraseña incorrectos.');
+        }
+
+        $request->session()->regenerate();
+        session(['cliente_id' => $cliente->Id_cliente, 'cliente_nombre' => $cliente->nombre_completo]);
+
+        return redirect()->route('tienda.tienda');
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->forget(['cliente_id', 'cliente_nombre']);
+        $request->session()->regenerateToken();
+        return redirect()->route('tienda.inicio');
+    }
+
+    /* ---------- Crear cuenta ---------- */
+
+    public function showRegistro()
+    {
+        return view('htmlv.crearcu');
+    }
+
+    public function registro(Request $request)
+    {
+        $d = $this->validar($request, [
+            'nombre'     => 'required|string|max:20',
+            'paterno'    => 'required|string|max:20',
+            'telefono'   => ['required', 'regex:/^[0-9]{10}$/', 'unique:cliente,Telefono'],
+            'contrasena' => 'required|string|min:6|max:100',
+            'confirmar'  => 'required|same:contrasena',
+            'direccion'  => 'required|string|max:100',
+            'cp'         => ['required', 'regex:/^[0-9]{5}$/'],
+        ]);
+
+        Cliente::create([
+            'Nombre' => $d['nombre'], 'Ap_paterno' => $d['paterno'], 'Telefono' => $d['telefono'],
+            'Contrasena' => Hash::make($d['contrasena']), 'Direccion' => $d['direccion'], 'CP' => $d['cp'],
+        ]);
+
+        return redirect()->route('tienda.registro.exito');
+    }
+
+    public function registroExito()
+    {
+        return view('htmlv.crearcuex');
+    }
+
+    /* ---------- Recuperar contraseña (3 pasos) ---------- */
+
+    public function recuperar()
+    {
+        return view('htmlv.recuperarcon');
+    }
+
+    public function recuperarBuscar(Request $request)
+    {
+        $d = $this->validar($request, ['telefono' => 'required|string|max:10']);
+
+        $cliente = Cliente::where('Telefono', trim($d['telefono']))->first();
+        if (!$cliente) {
+            return back()->withInput()->with('err', 'No encontramos una cuenta con ese teléfono.');
+        }
+
+        session(['recuperar_id' => $cliente->Id_cliente]);
+        return redirect()->route('tienda.recuperar.paso2');
+    }
+
+    public function recuperarPaso2()
+    {
+        $cliente = Cliente::find(session('recuperar_id'));
+        if (!$cliente) {
+            return redirect()->route('tienda.recuperar');
+        }
+        return view('htmlv.recuperarco2', ['cliente' => $cliente]);
+    }
+
+    public function recuperarGuardar(Request $request)
+    {
+        $cliente = Cliente::find(session('recuperar_id'));
+        if (!$cliente) {
+            return redirect()->route('tienda.recuperar');
+        }
+
+        $d = $this->validar($request, [
+            'nueva'     => 'required|string|min:6|max:100',
+            'confirmar' => 'required|same:nueva',
+        ]);
+
+        $cliente->update(['Contrasena' => Hash::make($d['nueva'])]);
+        session()->forget('recuperar_id');
+
+        return redirect()->route('tienda.recuperar.exito');
+    }
+
+    public function recuperarExito()
+    {
+        return view('htmlv.recuperarcon3');
+    }
+}

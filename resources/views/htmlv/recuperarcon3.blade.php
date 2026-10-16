@@ -6,12 +6,12 @@
     <title>Contraseña actualizada — DAV Tienda</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/recuperar.css">
+    <link rel="stylesheet" href="{{ asset('css/recuperar.css') }}">
 </head>
 <body>
 
 <header class="site-header">
-    <img src="../img/logo.jpg" alt="Logo">
+    <img src="{{ asset('img/logo.jpg') }}" alt="Logo">
     <div class="brand">DAV <span>Tienda</span></div>
 </header>
 
@@ -33,7 +33,7 @@
             <div class="success-icon">🎊</div>
             <h2>¡Contraseña actualizada!</h2>
             <p>Tu contraseña fue cambiada exitosamente.<br>Ahora puedes iniciar sesión.</p>
-            <a href="login.html" class="btn-go">Iniciar sesión →</a>
+            <a href="{{ route('tienda.login') }}" class="btn-go">Iniciar sesión →</a>
         </div>
     </div>
 </div>

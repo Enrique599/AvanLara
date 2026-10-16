@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda</title>
-    <link rel="stylesheet" href="../css/inicio.css">
+    <link rel="stylesheet" href="{{ asset('css/inicio.css') }}">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
     <header>
         <div class="top-header">
             <div class="logo">
-                <img src="../img/logo.jpg" alt="Logo de Ventas">
+                <img src="{{ asset('img/logo.jpg') }}" alt="Logo de Ventas">
             </div>
 
             <div class="barra-busqueda">
@@ -23,10 +23,10 @@
         </div>
 
         <nav>
-            <a href="categorias.html">Categorías</a>
+            <a href="{{ route('tienda.categorias') }}">Categorías</a>
             <a href="#">Ofertas</a>
-            <a href="login.html">Iniciar sesión</a>
-            <a href="crear-cuenta.html">Crear Cuenta</a>
+            <a href="{{ route('tienda.login') }}">Iniciar sesión</a>
+            <a href="{{ route('tienda.registro') }}">Crear Cuenta</a>
         </nav>
     </header>
 
@@ -34,19 +34,19 @@
 
         <div class="producto">
             <div class="titulo">Oferta del día</div>
-            <img src="../img/ves1.jpg" alt="">
+            <img src="{{ asset('img/ves1.jpg') }}" alt="">
         </div>
 
         <div class="producto">
             <div class="titulo">Menos de $100</div>
-            <img src="../img/ves2.jpg" alt="">
-            <div class="precio">$65</div>
+            <img src="{{ asset('img/ves2.jpg') }}" alt="">
+            @if($precioMenos100 !== null)<div class="precio">${{ rtrim(rtrim(number_format($precioMenos100, 2), '0'), '.') }}</div>@endif
         </div>
 
         <div class="producto">
             <div class="titulo">Mas vendidos</div>
-            <img src="../img/ves3.jpg" alt="">
-            <div class="precio">$117</div>
+            <img src="{{ asset('img/ves3.jpg') }}" alt="">
+            @if($precioMasVendido !== null)<div class="precio">${{ rtrim(rtrim(number_format($precioMasVendido, 2), '0'), '.') }}</div>@endif
         </div>
 
     </section>

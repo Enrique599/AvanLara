@@ -6,12 +6,12 @@
     <title>Recuperar contraseña — DAV Tienda</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/recuperar.css">
+    <link rel="stylesheet" href="{{ asset('css/recuperar.css') }}">
 </head>
 <body>
 
 <header class="site-header">
-    <img src="../img/logo.jpg" alt="Logo">
+    <img src="{{ asset('img/logo.jpg') }}" alt="Logo">
     <div class="brand">DAV <span>Tienda</span></div>
 </header>
 
@@ -30,16 +30,19 @@
 
     <div class="form-card">
 
-        <form action="recuperar-password-paso2.html" method="get">
+        <form action="{{ route('tienda.recuperar.buscar') }}" method="post">
+            @csrf
+            @if(session('err'))<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">{{ session('err') }}</div>@endif
+        @if($errors->any())<div style="background:#fde2e2;color:#b00020;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px">@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>@endif
             <div class="fg">
                 <label>Número de teléfono</label>
                 <div class="icon-input"><span>📞</span>
-                <input type="tel" name="telefono" placeholder="El teléfono de tu cuenta" required autofocus></div>
+                <input type="tel" name="telefono" placeholder="El teléfono de tu cuenta" value="{{ old('telefono') }}" required autofocus></div>
                 <span class="help-text">Ingresa el número con el que creaste tu cuenta</span>
             </div>
 
             <button type="submit" class="btn-primary">🔍 Buscar cuenta</button>
-            <a href="login.html" class="btn-back">← Volver al inicio de sesión</a>
+            <a href="{{ route('tienda.login') }}" class="btn-back">← Volver al inicio de sesión</a>
         </form>
 
     </div>

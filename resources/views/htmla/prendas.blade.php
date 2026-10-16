@@ -6,85 +6,85 @@
   <title>Registro de Prendas — Sistema DAV</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 
   <!-- SIDEBAR -->
   <nav id="sb">
     <div class="sb-head">
-      <div class="logo-c"><img src="../img/logo.jpeg" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
+      <div class="logo-c"><img src="{{ asset('img/logo.jpeg') }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='⚙'"></div>
       <div class="logo-t">SistemaCRUD</div>
     </div>
     <div class="sb-user">
-      <div class="av">CM</div>
+      <div class="av">{{ collect(explode(' ', session('admin_nombre', 'Admin')))->map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('') }}</div>
       <div>
-        <div class="un">Carlos Morales</div>
-        <div class="ur">Administrador</div>
+        <div class="un">{{ session('admin_nombre', 'Administrador') }}</div>
+        <div class="ur">{{ ucfirst(session('admin_rol', 'admin')) }}</div>
       </div>
     </div>
 
     <div class="sb-lbl">Principal</div>
-    <a href="dashboard.html" class="ni ">
+    <a href="{{ route('admin.dashboard') }}" class="ni ">
       <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
     </a>
 
     <div class="sb-lbl">Operatividad</div>
 
-    <a href="ventas.html" class="ni ">
+    <a href="{{ route('admin.ventas.index') }}" class="ni ">
       <i class="fas fa-dollar-sign"></i><span>Ventas</span>
     </a>
 
-    <a href="pedidos-clientes.html" class="ni ">
+    <a href="{{ route('admin.pedidos-clientes.index') }}" class="ni ">
       <i class="fas fa-box"></i><span>Pedidos de clientes</span>
     </a>
 
-    <a href="pedidos-proveedores.html" class="ni ">
+    <a href="{{ route('admin.pedidos-proveedores.index') }}" class="ni ">
       <i class="fas fa-truck-loading"></i><span>Pedidos a proveedores</span>
     </a>
 
-    <a href="registro-proveedores.html" class="ni ">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni ">
       <i class="fas fa-clipboard-list"></i><span>Registro proveedores</span>
     </a>
 
-    <a href="validacion-pago.html" class="ni ">
+    <a href="{{ route('admin.validacion-pago.index') }}" class="ni ">
       <i class="fas fa-money-check-dollar"></i><span>Validación de pago</span>
     </a>
 
     <div class="sb-lbl">Catálogos</div>
 
-    <a href="clientes.html" class="ni ">
+    <a href="{{ route('admin.clientes.index') }}" class="ni ">
       <i class="fas fa-users"></i><span>Clientes</span>
     </a>
 
-    <a href="prendas.html" class="ni act">
+    <a href="{{ route('admin.prendas.index') }}" class="ni act">
       <i class="fas fa-shirt"></i><span>Prendas</span>
     </a>
 
-    <a href="productos.html" class="ni ">
+    <a href="{{ route('admin.productos.index') }}" class="ni ">
       <i class="fas fa-box-open"></i><span>Productos</span>
     </a>
 
-    <a href="usuarios.html" class="ni ">
+    <a href="{{ route('admin.usuarios.index') }}" class="ni ">
       <i class="fas fa-user-gear"></i><span>Usuarios</span>
     </a>
 
-    <a href="inventario.html" class="ni ">
+    <a href="{{ route('admin.inventario.index') }}" class="ni ">
       <i class="fas fa-warehouse"></i><span>Inventario</span>
     </a>
 
-    <a href="#" class="ni">
+    <a href="{{ route('admin.proveedores.index') }}" class="ni">
       <i class="fas fa-truck"></i><span>Proveedores</span>
     </a>
 
     <div class="sb-lbl">Sistema</div>
-    <a href="respaldar-bd.html" class="ni ">
+    <a href="{{ route('admin.respaldo.index') }}" class="ni ">
       <i class="fas fa-download"></i><span>Respaldar BD</span>
     </a>
-    <a href="restaurar-bd.html" class="ni ">
+    <a href="{{ route('admin.restaurar.index') }}" class="ni ">
       <i class="fas fa-upload"></i><span>Restaurar BD</span>
     </a>
-    <a href="reporte-pdf.html" class="ni ">
+    <a href="{{ route('admin.reporte.index') }}" class="ni ">
       <i class="fas fa-file-pdf"></i><span>Reporte PDF</span>
     </a>
   </nav>
@@ -99,26 +99,33 @@
         Home / <span style="color:var(--accent)">Registro de Prendas</span>
       </div>
       <div class="tb-right">
-        <div class="tb-icon"><i class="fas fa-bell"></i><span class="bdot">3</span></div>
-        <div class="av" style="cursor:pointer">AP</div>
+                <form action="{{ route('admin.logout') }}" method="post" style="display:inline">@csrf<button type="submit" class="btn btn-sm btn-outline" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i> Salir</button></form>
       </div>
     </div>
     <!-- CONTENT START -->
     
     <div id="content">
 
+@if(session('ok'))<div class="alert alert-ok"><i class="fas fa-check-circle"></i> {{ session('ok') }}</div>@endif
+@if(session('err'))<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i> {{ session('err') }}</div>@endif
+@if($errors->any())<div class="alert alert-err"><i class="fas fa-exclamation-circle"></i><div>@foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div></div>@endif
+
 <div class="ptitle">Registro de Prendas</div>
-<div class="psub">☀️ ¡Buenos días!</div>
+<div class="psub">{{ $saludo }}</div>
 
 <div class="fcard">
-  <form action="#" method="post" onsubmit="return false">
+  @php $e = $editar ?? null; @endphp
+  <form action="{{ $e ? route('admin.prendas.update', $e) : route('admin.prendas.store') }}" method="post">
+    @csrf
+    @if($e) @method('PUT') @endif
     <div class="fgrid" style="grid-template-columns:1fr 1fr auto">
-      <div class="fg"><label>Nombre de la Prenda *</label><input class="fc" type="text" placeholder="Nombre de la prenda" required></div>
-      <div class="fg"><label>Número de Piezas *</label><input class="fc" type="number" min="0" placeholder="0" required></div>
+      <div class="fg"><label>Nombre de la Prenda *</label><input class="fc" type="text" name="prendas" maxlength="10" placeholder="Nombre de la prenda" value="{{ old('prendas', $e->Prendas ?? '') }}" required></div>
+      <div class="fg"><label>Número de Piezas *</label><input class="fc" type="number" min="0" name="num_piezas" placeholder="0" value="{{ old('num_piezas', $e->Num_piezas ?? '') }}" required></div>
       <div class="fg" style="justify-content:flex-end"><label>&nbsp;</label>
-        <button type="submit" class="btn btn-primary" style="height:42px"><i class="fas fa-save"></i> Guardar</button>
+        <button type="submit" class="btn btn-primary" style="height:42px"><i class="fas fa-save"></i> {{ $e ? 'Actualizar' : 'Guardar' }}</button>
       </div>
     </div>
+    @if($e)<a href="{{ route('admin.prendas.index') }}" class="btn btn-outline"><i class="fas fa-times"></i> Cancelar edición</a>@endif
   </form>
 </div>
 
@@ -127,9 +134,11 @@
   <table>
     <thead><tr><th>ID</th><th>Prenda</th><th>Núm. Piezas</th><th>Eliminar</th><th>Modificar</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>Playera</td><td>120</td><td><a href="#" class="ib ib-del" onclick="return false"><i class="fas fa-times"></i></a></td><td><a href="#" class="ib ib-edit" onclick="return false"><i class="fas fa-pencil-alt"></i></a></td></tr>
-      <tr><td>2</td><td>Pantalón</td><td>85</td><td><a href="#" class="ib ib-del" onclick="return false"><i class="fas fa-times"></i></a></td><td><a href="#" class="ib ib-edit" onclick="return false"><i class="fas fa-pencil-alt"></i></a></td></tr>
-      <tr><td>3</td><td>Chamarra</td><td>34</td><td><a href="#" class="ib ib-del" onclick="return false"><i class="fas fa-times"></i></a></td><td><a href="#" class="ib ib-edit" onclick="return false"><i class="fas fa-pencil-alt"></i></a></td></tr>
+      @foreach($prendas as $p)
+      <tr><td>{{ $p->Id_prendas }}</td><td>{{ $p->Prendas }}</td><td>{{ $p->Num_piezas }}</td>
+        <td><form action="{{ route('admin.prendas.destroy', $p) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar este registro?')">@csrf @method('DELETE')<button type="submit" class="ib ib-del" title="Eliminar"><i class="fas fa-times"></i></button></form></td><td><a href="{{ route('admin.prendas.edit', $p) }}" class="ib ib-edit" title="Modificar"><i class="fas fa-pencil-alt"></i></a></td></tr>
+      @endforeach
+      @if($prendas->isEmpty())<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">No hay prendas registradas.</td></tr>@endif
     </tbody>
   </table>
 </div>

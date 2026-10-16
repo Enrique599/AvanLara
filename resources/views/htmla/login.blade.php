@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
 
@@ -22,15 +22,20 @@
 
     <div class="hint-box">
         💡 Acceso por defecto: <strong>admin</strong> / <strong>admin123</strong><br>
-        O usa las credenciales del empleado registrado en BD.
+        O usa las credenciales de un empleado registrado.
     </div>
 
-    <form action="dashboard.html" method="get">
+    @if($errors->any())
+    <div class="alert-error">{{ $errors->first() }}</div>
+    @endif
+
+    <form action="{{ route('admin.login.post') }}" method="post">
+        @csrf
         <div class="fg">
             <label>Usuario / Teléfono</label>
             <div class="input-wrap">
                 <i class="fas fa-user"></i>
-                <input type="text" name="telefono" placeholder="Teléfono o 'admin'" required autofocus>
+                <input type="text" name="telefono" placeholder="Teléfono o 'admin'" value="{{ old('telefono') }}" required autofocus>
             </div>
         </div>
 
@@ -48,7 +53,7 @@
     </form>
 
     <div class="footer-note">
-        ¿Eres cliente? <a href="../../Ventas/html/inicio.html">Ir a la tienda</a>
+        ¿Eres cliente? <a href="{{ route('tienda.inicio') }}">Ir a la tienda</a>
     </div>
 </div>
 

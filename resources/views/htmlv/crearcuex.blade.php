@@ -6,12 +6,12 @@
     <title>Cuenta creada — DAV Tienda</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/cuenta.css">
+    <link rel="stylesheet" href="{{ asset('css/cuenta.css') }}">
 </head>
 <body>
 
     <header class="site-header">
-        <img src="../img/logo.jpg" alt="Logo">
+        <img src="{{ asset('img/logo.jpg') }}" alt="Logo">
         <div class="brand">DAV <span>Tienda</span></div>
     </header>
 
@@ -24,7 +24,7 @@
                 <div class="success-icon">🎉</div>
                 <h2>¡Cuenta creada!</h2>
                 <p>Tu cuenta fue registrada exitosamente.<br>Ya puedes iniciar sesión.</p>
-                <a href="login.html" class="btn-go">Iniciar sesión →</a>
+                <a href="{{ route('tienda.login') }}" class="btn-go">Iniciar sesión →</a>
             </div>
         </div>
     </div>
